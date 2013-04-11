@@ -5,6 +5,11 @@ Library/cache
 Library/metadata
 Library/previews
 Library/ScriptAssemblies
+Library/AssetServerCacheV3
+Library/ScriptMapper
+Library/assetDatabase3
+Library/expandedItems
+Library/guidmapper
  
 Assembly-CSharp-Editor-firstpass-vs.csproj
 Assembly-CSharp-Editor-firstpass.csproj
