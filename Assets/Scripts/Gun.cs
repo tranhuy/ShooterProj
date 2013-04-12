@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Gun : MonoBehaviour 
 {
-    public GameObject muzzleFlashPrefab, bulletPrefab;
-    GameObject bullet;
+    public GameObject muzzleFlashPrefab, bulletPrefab, bulletCasePrefab;
+    GameObject bullet, bulletCase;
     Transform muzzle;
     public AudioClip gunShot, emptyClip, reload;
 
@@ -42,6 +42,8 @@ public class Gun : MonoBehaviour
             AudioSource.PlayClipAtPoint(gunShot, transform.position);
             Instantiate(muzzleFlashPrefab, muzzle.position, Quaternion.identity);   // spawn muzzle flash
             bullet = Instantiate(bulletPrefab, Camera.main.transform.position, muzzle.rotation) as GameObject;
+            bulletCase = Instantiate(bulletCasePrefab, muzzle.position, Quaternion.identity) as GameObject;
+            bulletCase.GetComponent<BulletCase>().velocity = muzzle.right + Random.insideUnitSphere;
         }
         ammoCount--;
     }

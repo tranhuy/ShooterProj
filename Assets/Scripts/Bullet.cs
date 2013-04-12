@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class Bullet : MonoBehaviour {
-    public GameObject bulletHolePrefab;
+    public GameObject bulletHoleTargetPrefab, bulletHoleGroundPrefab, dustCloudPrefab;
     GameObject bulletHole;
     Gun gun;
     public float distanceFromSurface;
@@ -17,8 +17,19 @@ public class Bullet : MonoBehaviour {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, gun.fireRange))
         {
-            bulletHole = Instantiate(bulletHolePrefab, hit.point + hit.normal * distanceFromSurface, Quaternion.LookRotation(hit.normal)) as GameObject;
-            bulletHole.transform.parent = hit.transform;
+            Vector3 spawnPos = hit.point + hit.normal * distanceFromSurface;
+            Quaternion spawnRotation = Quaternion.LookRotation(hit.normal);
+
+            if (hit.transform.CompareTag("Enemy"))
+            {
+                bulletHole = Instantiate(bulletHoleTargetPrefab, spawnPos, spawnRotation) as GameObject;
+                bulletHole.transform.parent = hit.transform;
+            }
+            if (hit.transform.name.Equals("Ground"))
+            {
+                Instantiate(bulletHoleGroundPrefab, spawnPos, spawnRotation);
+                Instantiate(dustCloudPrefab, spawnPos, spawnRotation);
+            }
         }
         Destroy(gameObject);
 	}

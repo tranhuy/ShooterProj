@@ -48,7 +48,7 @@ public class PlayerMove : MonoBehaviour {
                 Walk();
             }
         }
-        else
+        else 
         {
             Idle();
         }
