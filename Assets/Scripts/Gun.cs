@@ -27,7 +27,7 @@ public class Gun : MonoBehaviour
     public GUIStyle ammoCounter;
     void OnGUI()
     {
-        GUI.Label(new Rect(Screen.width - 120, Screen.height - 50, 120, 50), ammoCount + "/" + ammoCapacity, ammoCounter);
+        GUI.Label(new Rect(Screen.width - 200, Screen.height - 30, 200, 30), "Ammo: " + ammoCount + "/" + ammoCapacity, ammoCounter);
     }
 
     public void Shoot()

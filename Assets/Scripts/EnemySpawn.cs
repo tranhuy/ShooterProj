@@ -2,9 +2,9 @@ using UnityEngine;
 using System.Collections;
 
 public class EnemySpawn : MonoBehaviour {
-    public GameObject enemyPrefab;
+    public GameObject enemyPrefab, enemyBossPrefab;
     public GameObject player;
-    GameObject enemy;
+    GameObject enemy, boss;
     float timeSpawned;
     float timePerSpawn = 8.0f;
 
@@ -22,7 +22,7 @@ public class EnemySpawn : MonoBehaviour {
     }
 
 	void Start () {
-	
+        SpawnEnemyBoss();
 	}
 	
 	// Update is called once per frame
@@ -35,6 +35,12 @@ public class EnemySpawn : MonoBehaviour {
         }
         timeSpawned += Time.deltaTime;
 	}
+
+    GameObject SpawnEnemyBoss()
+    {
+        boss = Instantiate(enemyBossPrefab, new Vector3(terrainWidth / 2, 15, terrainLength / 2), Quaternion.Euler(new Vector3(0, -180, 0))) as GameObject;
+        return boss;
+    }
 
     void SpawnEnemy()
     {

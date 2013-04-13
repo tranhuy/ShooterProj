@@ -5,6 +5,7 @@ public class Bullet : MonoBehaviour {
     public GameObject bulletHoleTargetPrefab, bulletHoleGroundPrefab, dustCloudPrefab;
     GameObject bulletHole;
     Gun gun;
+    float bulletLife = 1.0f;
     public float distanceFromSurface;
 
 	// Use this for initialization
@@ -31,6 +32,6 @@ public class Bullet : MonoBehaviour {
                 Instantiate(dustCloudPrefab, spawnPos, spawnRotation);
             }
         }
-        Destroy(gameObject);
+        Destroy(gameObject, bulletLife);
 	}
 }

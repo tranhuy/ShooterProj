@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class GameManager : MonoBehaviour {
+    public int gamePoints;
 
     int buttonWidth, buttonHeight;
     int HUDWindowHeight, HUDWindowWidth;
