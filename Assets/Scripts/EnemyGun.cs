@@ -4,7 +4,7 @@ using System.Collections;
 public class EnemyGun : MonoBehaviour {
     public GameObject bulletPrefab;
     public AudioClip gunShot;
-    public int damage = 5;
+    public int damage = 2;
     public float fireRate = 4.0f;
     float timeTilNextShot;   
 

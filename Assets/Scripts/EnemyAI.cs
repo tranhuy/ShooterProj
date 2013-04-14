@@ -71,8 +71,11 @@ public class EnemyAI : MonoBehaviour {
 
     void OnCollisionEnter(Collision collideObj)
     {
-        animation.CrossFade("land");
-        isActive = true;
+        if (collideObj.transform.name.Equals("Ground"))
+        {
+            animation.CrossFade("land");
+            isActive = true;
+        }      
     }
 
     void UpdateHealthBar()
