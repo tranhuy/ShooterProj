@@ -24,7 +24,13 @@ public class EnemyAI : MonoBehaviour {
     bool isActive = false;
 
     // ENEMY OBJECTS
-    EnemyGun gun;
+    EnemyGun gun;                                   // WEAPON
+    public GameObject bloodPrefab;                  // BLOOD 
+    GameObject blood;
+    public float maxBloodSize = 1.2f;
+    public float bloodSpreadTime = 5.0f;
+    float bloodSpreadVel;
+    Vector3 currentBloodSize;   
 
     // ENEMY TARGET
     Transform target;
@@ -60,6 +66,10 @@ public class EnemyAI : MonoBehaviour {
             }
             UpdateHealthBar();   
         }
+        if (blood && currentBloodSize.x < maxBloodSize)
+        {
+            SpreadBlood();
+        }
 	}
 
     void InitializeAnimations()
@@ -80,7 +90,7 @@ public class EnemyAI : MonoBehaviour {
         {
             animation.CrossFade("land");
             isActive = true;
-        }      
+        }
     }
 
     void UpdateHealthBar()
@@ -95,6 +105,14 @@ public class EnemyAI : MonoBehaviour {
     public float GetHealth()
     {
         return currentHealth;
+    }
+
+    void SpreadBlood()
+    {
+        float deltaSize = Mathf.SmoothDamp(currentBloodSize.x, maxBloodSize, ref bloodSpreadVel, bloodSpreadTime);
+        currentBloodSize.x = deltaSize;
+        currentBloodSize.z = deltaSize;
+        blood.transform.localScale = currentBloodSize;
     }
 
     // Method returns true if enemy is facing player and false otherwise
@@ -137,17 +155,20 @@ public class EnemyAI : MonoBehaviour {
             currentHealth -= (damage / (int)resistance);
             if (currentHealth <= 0)
             {
-                Death();
+                StartCoroutine("Death");
             }
         }
     }
 
-    void Death()
+    IEnumerator Death()
     {
-        Destroy(rigidbody);
-        Destroy(collider);
-        UpdateHealthBar();
         isActive = false;
+        UpdateHealthBar();
+        Destroy(rigidbody);
+        Destroy(collider);           
         animation.CrossFade("die");
+        yield return new WaitForSeconds(death_anim.length);
+        blood = Instantiate(bloodPrefab, new Vector3(transform.position.x, 0, transform.position.z) - transform.forward, Quaternion.identity) as GameObject;
+        currentBloodSize = blood.transform.localScale;
     }
 }
