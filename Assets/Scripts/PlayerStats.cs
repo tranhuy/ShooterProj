@@ -24,7 +24,7 @@ public class PlayerStats : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-	
+	    
 	}
 
     public float GetHealth()
@@ -37,15 +37,18 @@ public class PlayerStats : MonoBehaviour {
         if (currentHealth > 0)
         {
             currentHealth -= damage;
-        }
-        else
-        {
-            Death();
+            if (currentHealth <= 0)
+            {
+                Death();
+            }
         }
     }
 
     void Death()
     {
+        // Disable player scripts
+        transform.GetComponent<PlayerMove>().enabled = false;
+        transform.GetComponent<PlayerShoot>().enabled = false;
         animation.CrossFade(death_anim.name);
     }
 

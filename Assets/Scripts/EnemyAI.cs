@@ -20,7 +20,7 @@ public class EnemyAI : MonoBehaviour {
     Transform target;
     PlayerStats playerStatus;
     float rotateToPlayerSpeed = 15.0f;
-    Quaternion targetOffset = Quaternion.Euler(0, -5, 0);
+    Quaternion targetOffset = Quaternion.Euler(0, -4, 0);
 
     // ENEMY HEALTH
     Transform healthBar;
@@ -51,8 +51,7 @@ public class EnemyAI : MonoBehaviour {
             animation.CrossFade("idle");
             if (playerStatus.GetHealth() > 0)
             {
-                TurnTowardsTarget();
-                  
+                TurnTowardsTarget();         
             }
             UpdateHealthBar();   
         }
@@ -91,11 +90,11 @@ public class EnemyAI : MonoBehaviour {
         Vector3 cross = Vector3.Cross(transform.forward, relativePosition.normalized);
         int angleBetween = Convert.ToInt32(Mathf.Asin(cross.y) * Mathf.Rad2Deg);
 
-        if (angleBetween > 5)
+        if (angleBetween > 4)
         {
             animation.CrossFade("spinRight");
         }
-        else if (angleBetween < 5)
+        else if (angleBetween < 4)
         {
             animation.CrossFade("spinLeft");
         }

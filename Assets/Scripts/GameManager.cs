@@ -3,15 +3,24 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
     public int gamePoints;
+    public PlayerStats player;
 
+    // HUD Properties
     int buttonWidth, buttonHeight;
     int HUDWindowHeight, HUDWindowWidth;
     int bottomWindowMargin;
     int leftIndent, topIndent;
 
+    // GO Properties
+    int GOButtonHeight;
+    int GOWindowHeight, GOWindowWidth;
+    int GOTopIndent, GOLeftIndent;
+    GUIStyle GameOverText = new GUIStyle();
+
 	// Use this for initialization
-	void Start () {    
-        SetWindowProperties();
+	void Start () {
+        SetHUDProperties();
+        SetGOProperties();
 	}
 	
 	// Update is called once per frame
@@ -26,7 +35,7 @@ public class GameManager : MonoBehaviour {
         //}
 	}
 
-    void SetWindowProperties()
+    void SetHUDProperties()
     {
         buttonWidth = Screen.width / 10;
         buttonHeight = 40;
@@ -35,6 +44,19 @@ public class GameManager : MonoBehaviour {
         bottomWindowMargin = 30;
         leftIndent = (Screen.width / 2) - (HUDWindowWidth / 2);
         topIndent = Screen.height - HUDWindowHeight - bottomWindowMargin;
+    }
+
+    void SetGOProperties()
+    {
+        GOWindowWidth = Screen.width / 4;
+        GOWindowHeight = Screen.height / 3;
+        GOLeftIndent = (Screen.width / 2) - (GOWindowWidth / 2);
+        GOTopIndent = (Screen.height / 2) - (GOWindowHeight / 2);
+        GOButtonHeight = GOWindowHeight / 4;
+
+        GameOverText.fontSize = GOButtonHeight;
+        GameOverText.fontStyle = FontStyle.Bold;
+        GameOverText.normal.textColor = Color.red;
     }
 
     void ShowCommandHUD(int windowID)
@@ -62,13 +84,43 @@ public class GameManager : MonoBehaviour {
         GUILayout.EndHorizontal();
     }
 
+    void ShowGameOver(int windowID)
+    {
+        GUIStyle GOButtonText = new GUIStyle(GUI.skin.button);
+        GOButtonText.fontSize = GOButtonHeight / 2;
+
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        GUILayout.Label("GAME OVER", GameOverText);
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+        GUILayout.FlexibleSpace();
+
+        if (GUILayout.Button("RETRY", GOButtonText, GUILayout.Height(GOButtonHeight)))
+        {
+            Application.LoadLevel("ThirdPersonShooterScene1");
+        }
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("QUIT", GOButtonText, GUILayout.Height(GOButtonHeight)))
+        {
+            Application.Quit();
+        }
+    }
+
     void OnGUI()
     {
-        GUIStyle windowStyle = new GUIStyle(GUI.skin.window);
-        windowStyle.padding = new RectOffset(5, 5, 12, 12);
+        GUIStyle windowStyleHUD = new GUIStyle(GUI.skin.window);
+        windowStyleHUD.padding = new RectOffset(5, 5, 12, 12);
+        GUIStyle windowStyleGO = new GUIStyle(GUI.skin.window);
+        windowStyleGO.padding = new RectOffset(20, 20, 20, 20);
+
         if (Input.GetKey(KeyCode.Space))
         {
-            GUILayout.Window(0, new Rect(leftIndent, topIndent, HUDWindowWidth, HUDWindowHeight), ShowCommandHUD, "", windowStyle);
+            GUILayout.Window(0, new Rect(leftIndent, topIndent, HUDWindowWidth, HUDWindowHeight), ShowCommandHUD, "", windowStyleHUD);
         }
+        if (player.GetHealth() <= 0)
+        {
+            GUILayout.Window(1, new Rect(GOLeftIndent, GOTopIndent, GOWindowWidth, GOWindowHeight), ShowGameOver, "", windowStyleGO);
+        }     
     }
 }
