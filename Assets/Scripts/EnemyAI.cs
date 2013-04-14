@@ -30,7 +30,7 @@ public class EnemyAI : MonoBehaviour {
     float currentHealth;
 
     // Animations
-    public AnimationClip land_anim, idle_anim, walk_anim, run_anim, shoot__anim, spinLeft_anim, spinRight_anim;
+    public AnimationClip land_anim, idle_anim, walk_anim, run_anim, shoot__anim, spinLeft_anim, spinRight_anim, death_anim;
 
 	// Use this for initialization
 	void Start () 
@@ -46,9 +46,9 @@ public class EnemyAI : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () {      
         if (isActive && !animation.IsPlaying("land"))
-        {      
+        {
             animation.CrossFade("idle");
             if (playerStatus.GetHealth() > 0)
             {
@@ -64,6 +64,8 @@ public class EnemyAI : MonoBehaviour {
         animation.AddClip(idle_anim, "idle");
         animation.AddClip(walk_anim, "walk");
         animation.AddClip(run_anim, "run");
+        animation.AddClip(death_anim, "die");
+        animation["die"].layer = 1;
         animation.AddClip(shoot__anim, "shoot");
         animation.AddClip(spinLeft_anim, "spinLeft");
         animation.AddClip(spinRight_anim, "spinRight");
@@ -85,6 +87,11 @@ public class EnemyAI : MonoBehaviour {
         float barHeight = 10;
         healthBarTexture.pixelInset = new Rect(xOffset, 0, barWidth, barHeight);
         healthBar.position = Camera.main.WorldToViewportPoint(transform.position + new Vector3(0, 2 * transform.localScale.y, 0));    // position healthbar over enemy
+    }
+
+    public float GetHealth()
+    {
+        return currentHealth;
     }
 
     // Method returns true if enemy is facing player and false otherwise
@@ -120,8 +127,22 @@ public class EnemyAI : MonoBehaviour {
         }      
     }
 
-    void ApplyDamage(int damage)
+    void ApplyDamage(float damage)
     {
-        currentHealth -= damage;
+        if (currentHealth > 0)
+        {
+            currentHealth -= damage;
+            if (currentHealth <= 0)
+            {
+                Death();
+            }
+        }
+    }
+
+    void Death()
+    {
+        UpdateHealthBar();
+        isActive = false;
+        animation.CrossFade("die");
     }
 }
