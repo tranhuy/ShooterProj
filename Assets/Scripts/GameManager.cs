@@ -21,18 +21,15 @@ public class GameManager : MonoBehaviour {
 	void Start () {
         SetHUDProperties();
         SetGOProperties();
+        Screen.lockCursor = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        //if (Input.GetKeyDown(KeyCode.Escape))
-        //{
-        //    Screen.lockCursor = false;
-        //}
-        //else
-        //{
-        //    Screen.lockCursor = true;
-        //}
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Screen.lockCursor = false;
+        }
 	}
 
     void SetHUDProperties()
@@ -120,6 +117,7 @@ public class GameManager : MonoBehaviour {
         }
         if (player.GetHealth() <= 0)
         {
+            Screen.lockCursor = false;
             GUILayout.Window(1, new Rect(GOLeftIndent, GOTopIndent, GOWindowWidth, GOWindowHeight), ShowGameOver, "", windowStyleGO);
         }     
     }

@@ -25,7 +25,7 @@ public class EnemyGun : MonoBehaviour {
         if (timeTilNextShot <= 0)
         {
             AudioSource.PlayClipAtPoint(gunShot, transform.position);
-            Instantiate(bulletPrefab, transform.position, transform.rotation);
+            Instantiate(bulletPrefab, transform.FindChild("bulletSpawn").position, transform.rotation);
             timeTilNextShot = 1;
         }  
     }

@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System;
 
 public class EnemyAI : MonoBehaviour {
 
@@ -18,9 +17,10 @@ public class EnemyAI : MonoBehaviour {
 
     // ENEMY TARGET
     Transform target;
+    Transform targetGun;
+    Quaternion targetOffset = Quaternion.Euler(0, -3, 0);
     PlayerStats playerStatus;
     float rotateToPlayerSpeed = 15.0f;
-    Quaternion targetOffset = Quaternion.Euler(0, -4, 0);
 
     // ENEMY HEALTH
     Transform healthBar;
@@ -37,8 +37,9 @@ public class EnemyAI : MonoBehaviour {
     {
         InitializeAnimations();
         target = GameObject.FindGameObjectWithTag("Player").transform;
-        playerStatus = target.GetComponent<PlayerStats>();
+        targetGun = GameObject.FindGameObjectWithTag("Gun").transform;
         gun = GameObject.FindGameObjectWithTag("LaserGun").GetComponent<EnemyGun>();
+        playerStatus = target.GetComponent<PlayerStats>();    
         healthBar = transform.FindChild("EnemyHealth");
         healthBarTexture = healthBar.guiTexture;
         currentHealth = maxHealth;
@@ -87,16 +88,15 @@ public class EnemyAI : MonoBehaviour {
     bool TurnTowardsTarget()
     {
         // Finding out if player target is on right or left side 
-        Vector3 relativePosition = target.position - transform.position;
-        Vector3 cross = Vector3.Cross(transform.forward, relativePosition.normalized);
-        int angleBetween = Convert.ToInt32(Mathf.Asin(cross.y) * Mathf.Rad2Deg);
+        Vector3 relativePosition = targetGun.position - gun.transform.position;
+        Vector3 cross = Vector3.Cross(gun.transform.forward, relativePosition.normalized);
+        int angleBetween = (int)(Mathf.Asin(cross.y) * Mathf.Rad2Deg);
 
-        // Player model and enemy boss model are offset by around 4 degrees
-        if (angleBetween > 4)
+        if (angleBetween > 0)
         {
             animation.CrossFade("spinRight");
         }
-        else if (angleBetween < 4)
+        else if (angleBetween < 0)
         {
             animation.CrossFade("spinLeft");
         }
