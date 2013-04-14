@@ -15,7 +15,7 @@ public class Crosshair : MonoBehaviour {
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            if (hit.transform.CompareTag("Enemy"))
+            if (hit.transform.CompareTag("Enemy") || hit.transform.CompareTag("Target"))
             {
                 guiText.material.color = Color.red;
             }

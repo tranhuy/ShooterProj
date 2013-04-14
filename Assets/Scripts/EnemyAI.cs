@@ -3,13 +3,24 @@ using System.Collections;
 
 public class EnemyAI : MonoBehaviour {
 
-    // ENEMY STATES
-    enum EnemyStates
+    // ENEMY RESISTANCE
+    public enum Armor
     {
-        PURSUE,
-        ATTACK,
-        RAGE
+        WEAK = 20,
+        MEDIUM = 30,
+        STRONG = 40,
+        ELITE = 50,
+        BOSS = 60
     }
+     public Armor resistance = Armor.MEDIUM;
+
+    // ENEMY HEALTH
+    Transform healthBar;
+    GUITexture healthBarTexture;
+    int healthBarLength = 100;
+    public float maxHealth = 100;
+    float currentHealth;
+
     bool isActive = false;
 
     // ENEMY OBJECTS
@@ -20,14 +31,7 @@ public class EnemyAI : MonoBehaviour {
     Transform targetGun;
     Quaternion targetOffset = Quaternion.Euler(0, -3, 0);
     PlayerStats playerStatus;
-    float rotateToPlayerSpeed = 15.0f;
-
-    // ENEMY HEALTH
-    Transform healthBar;
-    GUITexture healthBarTexture;
-    int healthBarLength = 100;
-    public float maxHealth = 100;
-    float currentHealth;
+    float rotateToPlayerSpeed = 15.0f;  
 
     // Animations
     public AnimationClip land_anim, idle_anim, walk_anim, run_anim, shoot__anim, spinLeft_anim, spinRight_anim, death_anim;
@@ -65,7 +69,6 @@ public class EnemyAI : MonoBehaviour {
         animation.AddClip(walk_anim, "walk");
         animation.AddClip(run_anim, "run");
         animation.AddClip(death_anim, "die");
-        animation["die"].layer = 1;
         animation.AddClip(shoot__anim, "shoot");
         animation.AddClip(spinLeft_anim, "spinLeft");
         animation.AddClip(spinRight_anim, "spinRight");
@@ -130,8 +133,8 @@ public class EnemyAI : MonoBehaviour {
     void ApplyDamage(float damage)
     {
         if (currentHealth > 0)
-        {
-            currentHealth -= damage;
+        {          
+            currentHealth -= (damage / (int)resistance);
             if (currentHealth <= 0)
             {
                 Death();
@@ -141,6 +144,8 @@ public class EnemyAI : MonoBehaviour {
 
     void Death()
     {
+        Destroy(rigidbody);
+        Destroy(collider);
         UpdateHealthBar();
         isActive = false;
         animation.CrossFade("die");

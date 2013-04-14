@@ -21,16 +21,16 @@ public class Bullet : MonoBehaviour {
             Vector3 spawnPos = hit.point + hit.normal * distanceFromSurface;
             Quaternion spawnRotation = Quaternion.LookRotation(hit.normal);
 
-            if (hit.transform.CompareTag("Target"))
-            {
-                bulletHole = Instantiate(bulletHoleTargetPrefab, spawnPos, spawnRotation) as GameObject;
-                bulletHole.transform.parent = hit.transform;
-            }
             if (hit.transform.name.Equals("Ground"))
             {
                 Instantiate(bulletHoleGroundPrefab, spawnPos, spawnRotation);
                 Instantiate(dustCloudPrefab, spawnPos, spawnRotation);
             }
+            if (hit.transform.CompareTag("Target"))
+            {
+                bulletHole = Instantiate(bulletHoleTargetPrefab, spawnPos, spawnRotation) as GameObject;
+                bulletHole.transform.parent = hit.transform;
+            }            
             if (hit.transform.CompareTag("Enemy"))
             {
                 hit.transform.SendMessage("ApplyDamage", gun.damage, SendMessageOptions.DontRequireReceiver);
