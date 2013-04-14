@@ -13,9 +13,14 @@ public class EnemyAI : MonoBehaviour {
     }
     bool isActive = false;
 
+    // ENEMY OBJECTS
+    EnemyGun gun;
+
     // ENEMY TARGET
-    Transform target;   
-    float rotateToPlayerSpeed = 15.0f;    
+    Transform target;
+    PlayerStats playerStatus;
+    float rotateToPlayerSpeed = 15.0f;
+    Quaternion targetOffset = Quaternion.Euler(0, -5, 0);
 
     // ENEMY HEALTH
     Transform healthBar;
@@ -32,6 +37,8 @@ public class EnemyAI : MonoBehaviour {
     {
         InitializeAnimations();
         target = GameObject.FindGameObjectWithTag("Player").transform;
+        playerStatus = target.GetComponent<PlayerStats>();
+        gun = GameObject.FindGameObjectWithTag("LaserGun").GetComponent<EnemyGun>();
         healthBar = transform.FindChild("EnemyHealth");
         healthBarTexture = healthBar.guiTexture;
         currentHealth = maxHealth;
@@ -42,8 +49,12 @@ public class EnemyAI : MonoBehaviour {
         if (isActive && !animation.IsPlaying("land"))
         {      
             animation.CrossFade("idle");
-            TurnTowardsTarget();  
-            UpdateHealthBar();           
+            if (playerStatus.GetHealth() > 0)
+            {
+                TurnTowardsTarget();
+                  
+            }
+            UpdateHealthBar();   
         }
 	}
 
@@ -80,15 +91,29 @@ public class EnemyAI : MonoBehaviour {
         Vector3 cross = Vector3.Cross(transform.forward, relativePosition.normalized);
         int angleBetween = Convert.ToInt32(Mathf.Asin(cross.y) * Mathf.Rad2Deg);
 
-        if (angleBetween > 0)
+        if (angleBetween > 5)
         {
             animation.CrossFade("spinRight");
         }
-        else if (angleBetween < 0)
+        else if (angleBetween < 5)
         {
             animation.CrossFade("spinLeft");
         }
+        else
+        {
+            ShootAttack();
+        }
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(relativePosition) * targetOffset, rotateToPlayerSpeed * Time.deltaTime);
+    }
 
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(relativePosition), rotateToPlayerSpeed * Time.deltaTime);
+    void ShootAttack()
+    {
+        animation.CrossFade("shoot");
+        gun.Shoot();    
+    }
+
+    void ApplyDamage(int damage)
+    {
+        currentHealth -= damage;
     }
 }

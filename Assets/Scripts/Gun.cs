@@ -9,7 +9,7 @@ public class Gun : MonoBehaviour
     public AudioClip gunShot, emptyClip, reload;
 
     public int ammoCount, ammoCapacity, clipSize;
-    public int recoil, damage;
+    public int recoil, damage, accuracy;
     public float reloadSpeed, fireRate, fireRange;
     
     void Start()

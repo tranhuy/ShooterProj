@@ -3,13 +3,20 @@ using System.Collections;
 
 public class PlayerStats : MonoBehaviour {
 
-    public int maxHealth = 100;
-    int currentHealth;
+    public float maxHealth = 100;
+    float currentHealth;
     float healthBarLength;
+
+    AnimationState death_anim;
 
 	// Use this for initialization
 	void Start () 
     {
+        death_anim = animation["Die_knocked_backward"];
+        death_anim.wrapMode = WrapMode.ClampForever;
+        death_anim.speed /= 2;
+        death_anim.layer = 1;
+
         currentHealth = maxHealth;
         healthBarLength = 250;
 	}
@@ -19,6 +26,28 @@ public class PlayerStats : MonoBehaviour {
     {
 	
 	}
+
+    public float GetHealth()
+    {
+        return currentHealth;
+    }
+
+    void ApplyDamage(int damage)
+    {
+        if (currentHealth > 0)
+        {
+            currentHealth -= damage;
+        }
+        else
+        {
+            Death();
+        }
+    }
+
+    void Death()
+    {
+        animation.CrossFade(death_anim.name);
+    }
 
     // Player heath bar
     public GUIStyle healthBarStyle;
