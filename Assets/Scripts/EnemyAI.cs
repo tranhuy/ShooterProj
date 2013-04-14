@@ -51,7 +51,7 @@ public class EnemyAI : MonoBehaviour {
             animation.CrossFade("idle");
             if (playerStatus.GetHealth() > 0)
             {
-                TurnTowardsTarget();         
+                ShootAttack();                      // ATTACK STATE    
             }
             UpdateHealthBar();   
         }
@@ -83,13 +83,15 @@ public class EnemyAI : MonoBehaviour {
         healthBar.position = Camera.main.WorldToViewportPoint(transform.position + new Vector3(0, 2 * transform.localScale.y, 0));    // position healthbar over enemy
     }
 
-    void TurnTowardsTarget()
+    // Method returns true if enemy is facing player and false otherwise
+    bool TurnTowardsTarget()
     {
         // Finding out if player target is on right or left side 
         Vector3 relativePosition = target.position - transform.position;
         Vector3 cross = Vector3.Cross(transform.forward, relativePosition.normalized);
         int angleBetween = Convert.ToInt32(Mathf.Asin(cross.y) * Mathf.Rad2Deg);
 
+        // Player model and enemy boss model are offset by around 4 degrees
         if (angleBetween > 4)
         {
             animation.CrossFade("spinRight");
@@ -100,15 +102,19 @@ public class EnemyAI : MonoBehaviour {
         }
         else
         {
-            ShootAttack();
+            return true;
         }
         transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(relativePosition) * targetOffset, rotateToPlayerSpeed * Time.deltaTime);
+        return false;
     }
 
     void ShootAttack()
     {
-        animation.CrossFade("shoot");
-        gun.Shoot();    
+        if (TurnTowardsTarget())
+        {
+            animation.CrossFade("shoot");
+            gun.Shoot();   
+        }      
     }
 
     void ApplyDamage(int damage)
