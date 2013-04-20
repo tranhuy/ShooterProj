@@ -12,7 +12,12 @@ public class EnemyAI : MonoBehaviour {
         ELITE = 40,
         BOSS = 50
     }
-     public Armor resistance = Armor.MEDIUM;
+    public Armor resistance = Armor.MEDIUM;
+
+    // DAMAGE MODIFIERS
+    float bodyDamageModifier = 1.0f;
+    float legDamageModifier = 0.8f;
+    float armDamageModifier = 0.6f;
 
     // ENEMY HEALTH
     Transform healthBar;
@@ -34,7 +39,7 @@ public class EnemyAI : MonoBehaviour {
 
     // ENEMY TARGET
     Transform target;
-    Transform targetGun;
+    Gun targetGun;
     Quaternion targetOffset = Quaternion.Euler(0, -3.6f, 0);    // difference in rotation between enemy boss and his gun
     PlayerStats playerStatus;
     float rotateToPlayerSpeed = 15.0f;  
@@ -45,9 +50,10 @@ public class EnemyAI : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
     {
+        Physics.IgnoreLayerCollision(2, 8);
         InitializeAnimations();
         target = GameObject.FindGameObjectWithTag("Player").transform;
-        targetGun = GameObject.FindGameObjectWithTag("Gun").transform;
+        targetGun = GameObject.FindGameObjectWithTag("Gun").GetComponent<Gun>();
         gun = GameObject.FindGameObjectWithTag("LaserGun").GetComponent<EnemyGun>();
         playerStatus = target.GetComponent<PlayerStats>();    
         healthBar = transform.FindChild("EnemyHealth");
@@ -128,7 +134,7 @@ public class EnemyAI : MonoBehaviour {
     bool TurnTowardsTarget()
     {
         // Finding out if player target is on right or left side 
-        Vector3 relativePosition = targetGun.position - gun.transform.position;
+        Vector3 relativePosition = targetGun.transform.position - gun.transform.position;
         Vector3 cross = Vector3.Cross(gun.transform.forward, relativePosition.normalized);
         int angleBetween = (int)(Mathf.Asin(cross.y) * Mathf.Rad2Deg);
 
@@ -159,7 +165,11 @@ public class EnemyAI : MonoBehaviour {
                     currentHealth -= currentHealth;
                     break;
                 case "armorBody":
-                    currentHealth -= gun.damage / (int)resistance;
+                    currentHealth -= bodyDamageModifier * (targetGun.damage / (int)resistance);
+                    break;
+                case "Bip01 L Thigh":
+                case "Bip01 R Thigh":
+                    currentHealth -= legDamageModifier * (targetGun.damage / (int)resistance);
                     break;
             }
             if (currentHealth <= 0)
