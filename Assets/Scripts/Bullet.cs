@@ -5,7 +5,7 @@ public class Bullet : MonoBehaviour {
     public GameObject bulletHoleTargetPrefab, bulletHoleGroundPrefab, dustCloudPrefab;
     GameObject bulletHole;
     Gun gun;
-    float bulletLife = 1.0f;
+    float bulletLife = 0.5f;
     public float distanceFromSurface;
 
 	// Use this for initialization
@@ -16,14 +16,14 @@ public class Bullet : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, gun.fireRange))
+        if (!bulletHole && Physics.Raycast(transform.position, transform.forward, out hit, gun.fireRange))
         {
             Vector3 spawnPos = hit.point + hit.normal * distanceFromSurface;
             Quaternion spawnRotation = Quaternion.LookRotation(hit.normal);
 
             if (hit.transform.name.Equals("Ground"))
             {
-                Instantiate(bulletHoleGroundPrefab, spawnPos, spawnRotation);
+                bulletHole = (GameObject)Instantiate(bulletHoleGroundPrefab, spawnPos, spawnRotation);
                 Instantiate(dustCloudPrefab, spawnPos, spawnRotation);
             }
             if (hit.transform.CompareTag("Target"))

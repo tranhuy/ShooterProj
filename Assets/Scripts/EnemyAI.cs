@@ -6,11 +6,11 @@ public class EnemyAI : MonoBehaviour {
     // ENEMY RESISTANCE
     public enum Armor
     {
-        WEAK = 20,
-        MEDIUM = 30,
-        STRONG = 40,
-        ELITE = 50,
-        BOSS = 60
+        WEAK = 10,
+        MEDIUM = 20,
+        STRONG = 30,
+        ELITE = 40,
+        BOSS = 50
     }
      public Armor resistance = Armor.MEDIUM;
 
@@ -35,7 +35,7 @@ public class EnemyAI : MonoBehaviour {
     // ENEMY TARGET
     Transform target;
     Transform targetGun;
-    Quaternion targetOffset = Quaternion.Euler(0, -3, 0);
+    Quaternion targetOffset = Quaternion.Euler(0, -3.6f, 0);    // difference in rotation between enemy boss and his gun
     PlayerStats playerStatus;
     float rotateToPlayerSpeed = 15.0f;  
 
@@ -52,11 +52,11 @@ public class EnemyAI : MonoBehaviour {
         playerStatus = target.GetComponent<PlayerStats>();    
         healthBar = transform.FindChild("EnemyHealth");
         healthBarTexture = healthBar.guiTexture;
-        currentHealth = maxHealth;
+        currentHealth = maxHealth;    
 	}
 	
 	// Update is called once per frame
-	void Update () {      
+	void Update () {
         if (isActive && !animation.IsPlaying("land"))
         {
             animation.CrossFade("idle");
@@ -115,6 +115,15 @@ public class EnemyAI : MonoBehaviour {
         blood.transform.localScale = currentBloodSize;
     }
 
+    void ShootAttack()
+    {
+        if (TurnTowardsTarget())
+        {
+            animation.CrossFade("shoot");
+            gun.Shoot();
+        }
+    }
+
     // Method returns true if enemy is facing player and false otherwise
     bool TurnTowardsTarget()
     {
@@ -123,6 +132,7 @@ public class EnemyAI : MonoBehaviour {
         Vector3 cross = Vector3.Cross(gun.transform.forward, relativePosition.normalized);
         int angleBetween = (int)(Mathf.Asin(cross.y) * Mathf.Rad2Deg);
 
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(relativePosition) * targetOffset, rotateToPlayerSpeed * Time.deltaTime);
         if (angleBetween > 0)
         {
             animation.CrossFade("spinRight");
@@ -133,20 +143,11 @@ public class EnemyAI : MonoBehaviour {
         }
         else
         {
-            return true;
+            return true;            // enemy is facing player
         }
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(relativePosition) * targetOffset, rotateToPlayerSpeed * Time.deltaTime);
+        
         return false;
-    }
-
-    void ShootAttack()
-    {
-        if (TurnTowardsTarget())
-        {
-            animation.CrossFade("shoot");
-            gun.Shoot();   
-        }      
-    }
+    } 
 
     void ApplyDamage(float damage)
     {
