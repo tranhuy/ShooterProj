@@ -149,11 +149,19 @@ public class EnemyAI : MonoBehaviour {
         return false;
     } 
 
-    void ApplyDamage(float damage)
+    void ApplyDamage(string bodyPart)
     {
         if (currentHealth > 0)
-        {          
-            currentHealth -= (damage / (int)resistance);
+        {
+            switch (bodyPart)
+            {
+                case "head":
+                    currentHealth -= currentHealth;
+                    break;
+                case "armorBody":
+                    currentHealth -= gun.damage / (int)resistance;
+                    break;
+            }
             if (currentHealth <= 0)
             {
                 StartCoroutine("Death");

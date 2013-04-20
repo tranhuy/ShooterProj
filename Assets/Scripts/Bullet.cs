@@ -31,9 +31,10 @@ public class Bullet : MonoBehaviour {
                 bulletHole = Instantiate(bulletHoleTargetPrefab, spawnPos, spawnRotation) as GameObject;
                 bulletHole.transform.parent = hit.transform;
             }            
-            if (hit.transform.CompareTag("Enemy"))
+            if (hit.transform.CompareTag("Enemy"))           // HEADSHOT = instant kill
             {
-                hit.transform.SendMessage("ApplyDamage", gun.damage, SendMessageOptions.DontRequireReceiver);
+                print(hit.collider.name);
+                hit.transform.SendMessage("ApplyDamage", hit.collider.name, SendMessageOptions.DontRequireReceiver);
             }
         }
         Destroy(gameObject, bulletLife);

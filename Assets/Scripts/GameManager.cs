@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
         SetHUDProperties();
         SetGOProperties();
-        Screen.lockCursor = true;
+        //Screen.lockCursor = true;
 	}
 	
 	// Update is called once per frame
