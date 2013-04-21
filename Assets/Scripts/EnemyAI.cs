@@ -6,11 +6,11 @@ public class EnemyAI : MonoBehaviour {
     // ENEMY RESISTANCE
     public enum Armor
     {
-        WEAK = 10,
-        MEDIUM = 20,
-        STRONG = 30,
-        ELITE = 40,
-        BOSS = 50
+        WEAK = 5,
+        MEDIUM = 10,
+        STRONG = 15,
+        ELITE = 25,
+        BOSS = 30
     }
     public Armor resistance = Armor.MEDIUM;
 
@@ -50,7 +50,6 @@ public class EnemyAI : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
     {
-        Physics.IgnoreLayerCollision(2, 8);
         InitializeAnimations();
         target = GameObject.FindGameObjectWithTag("Player").transform;
         targetGun = GameObject.FindGameObjectWithTag("Gun").GetComponent<Gun>();
@@ -101,6 +100,7 @@ public class EnemyAI : MonoBehaviour {
 
     void UpdateHealthBar()
     {
+        currentHealth = (currentHealth < 0) ? 0 : currentHealth;
         float xOffset = -healthBarTexture.pixelInset.width / 2;
         float barWidth = healthBarLength * (currentHealth / maxHealth);
         float barHeight = 10;
@@ -128,6 +128,12 @@ public class EnemyAI : MonoBehaviour {
             animation.CrossFade("shoot");
             gun.Shoot();
         }
+    }
+
+    void MoveTo(Vector3 location)
+    {
+        animation.CrossFade("run");
+
     }
 
     // Method returns true if enemy is facing player and false otherwise
@@ -159,6 +165,7 @@ public class EnemyAI : MonoBehaviour {
     {
         if (currentHealth > 0)
         {
+            // applying different amounts of damage based on body part hit
             switch (bodyPart)
             {
                 case "head":
@@ -170,6 +177,12 @@ public class EnemyAI : MonoBehaviour {
                 case "Bip01 L Thigh":
                 case "Bip01 R Thigh":
                     currentHealth -= legDamageModifier * (targetGun.damage / (int)resistance);
+                    break;
+                case "Bip01 L UpperArm":
+                case "Bip01 R UpperArm":
+                case "Bip01 L Forearm":
+                case "Bip01 R Forearm":
+                    currentHealth -= armDamageModifier * (targetGun.damage / (int)resistance);
                     break;
             }
             if (currentHealth <= 0)

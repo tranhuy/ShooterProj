@@ -41,7 +41,7 @@ public class Gun : MonoBehaviour
         {
             AudioSource.PlayClipAtPoint(gunShot, transform.position);
             Instantiate(muzzleFlashPrefab, muzzle.position, Quaternion.identity);   // spawn muzzle flash
-            bullet = Instantiate(bulletPrefab, Camera.main.transform.position, muzzle.rotation) as GameObject;
+            bullet = Instantiate(bulletPrefab, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
             bulletCase = Instantiate(bulletCasePrefab, muzzle.position, Quaternion.identity) as GameObject;
             bulletCase.GetComponent<BulletCase>().velocity = muzzle.right + Random.insideUnitSphere;
         }
