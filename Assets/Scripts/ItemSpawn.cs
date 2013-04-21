@@ -2,9 +2,9 @@ using UnityEngine;
 using System.Collections;
 
 public class ItemSpawn : MonoBehaviour {
-    public GameObject healthPackPrefab;
+    public GameObject medkitPrefab;
     public Transform player;
-    GameObject healthPack;
+    GameObject medkit;
     PlayerStats playerVitals;
 
     float lowHealthThreshold;
@@ -22,7 +22,7 @@ public class ItemSpawn : MonoBehaviour {
 	void Update () 
     {
         // drop healthpack when player's health dips below lowHealthThreshold and when there are unused healthpacks in the scene
-        if (!healthPack && playerVitals.GetHealth() < lowHealthThreshold)     
+        if (!medkit && playerVitals.GetHealth() < lowHealthThreshold)     
         {
             DropHealth();
         }   
@@ -32,6 +32,6 @@ public class ItemSpawn : MonoBehaviour {
     {
         // Dropping healthpack from above and in front of player
         Vector3 dropLocation = new Vector3(player.transform.position.x, dropHeight, player.transform.position.z) + (dropDistFromPlayer * player.transform.forward);
-        healthPack = (GameObject)Instantiate(healthPackPrefab, dropLocation, Quaternion.identity);
+        medkit = (GameObject)Instantiate(medkitPrefab, dropLocation, Quaternion.identity);
     }
 }
