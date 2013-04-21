@@ -17,9 +17,14 @@ public class AIStateMachine : MonoBehaviour {
 	float startTime;
 	GameObject player; 
 	public enemyStates currentState = enemyStates.IDLE;
+	public GameObject ground = null;
+	Terrain terrain;
 	
 	void Start () { 
-		player = GameObject.Find("SoldierPlayer"); 
+		player = GameObject.Find("SoldierPlayer");
+		ground = GameObject.Find("Ground");
+		terrain = ground.GetComponent<Terrain>();
+		print(ground);
 	}
 	 
 	void Update () { 
@@ -40,7 +45,7 @@ public class AIStateMachine : MonoBehaviour {
 			break;
 		case enemyStates.RECENTLY_ENGAGED:
 			/*In this state, there are two possible states that can be switched to.  The enemy can go either to 
-			 * IDLE if 10 seconds has passed, or back to attack if the player comes back within range. 
+			 * IDLE if 5 seconds has passed, or back to attack if the player comes back within range. 
 			*/ 
 			if (distanceFromPlayer <= distanceToAttack)
 			{
@@ -81,30 +86,49 @@ public class AIStateMachine : MonoBehaviour {
 			Enraged();
 			break;
 		} 
+		
+		if(Input.GetKeyDown("e")){
+			generateRandomVector();
+		}
 	}
 	
 	void Idle()
 	{
-		print ("Current State: Idle");
+		//print ("Current State: Idle");
 	}
 	
 	void RecentlyEngaged()
 	{
-		print ("Current State: Recently Engaged");
+		//print ("Current State: Recently Engaged");
 	}
 	
 	void Attack()
 	{
-		print ("Current State: Attack");
+		//print ("Current State: Attack");
 	}
 	
 	void Enraged()
 	{
-		print ("Current State: Enraged");
+		//print ("Current State: Enraged");
 	}
-	
 	void changeStates(enemyStates es)
 	{
 		currentState = es;
+	}
+	 
+	void generateRandomVector(){
+		float furthestXValue = terrain.terrainData.size.x;
+		float furthestZValue = terrain.terrainData.size.z; 
+		System.Random r1 = new System.Random();
+		int xVal, zVal;
+		Vector3 evadePosition;
+		do{
+			xVal = r1.Next((int)player.transform.position.x - 20, (int)player.transform.position.x + 20);
+			zVal = r1.Next((int)player.transform.position.z - 20, (int)player.transform.position.z + 20); 
+		  }
+		while((xVal > furthestXValue || xVal < 0) ||  
+		      ( zVal > furthestZValue || zVal < 0) );
+		evadePosition = new Vector3 (xVal, (int) -0.0200001, zVal);
+		transform.position = evadePosition;
 	}
 }
