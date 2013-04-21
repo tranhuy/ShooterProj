@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class Bullet : MonoBehaviour {
-    public GameObject bulletHoleTargetPrefab, bulletHoleGroundPrefab, bulletHoleEnemyPrefab, dustCloudPrefab;
+    public GameObject bulletHoleTargetPrefab, bulletHoleGroundPrefab, bloodSplatterPrefab, bulletHoleEnemyPrefab, dustCloudPrefab;
     GameObject bulletHole;
     Gun gun;
     float bulletLife = 0.5f;
@@ -34,7 +34,14 @@ public class Bullet : MonoBehaviour {
             if (hit.transform.CompareTag("Enemy"))           // HEADSHOT = instant kill
             {
                 print("Bullet hit: " + hit.collider.name);
-                bulletHole = (GameObject)Instantiate(bulletHoleEnemyPrefab, spawnPos, spawnRotation);
+                if (hit.collider.name.Equals("head"))
+                {
+                    bulletHole = (GameObject)Instantiate(bloodSplatterPrefab, spawnPos, spawnRotation);
+                }
+                else
+                {
+                    bulletHole = (GameObject)Instantiate(bulletHoleEnemyPrefab, spawnPos, spawnRotation);
+                }
                 hit.transform.SendMessage("ApplyDamage", hit.collider.name, SendMessageOptions.DontRequireReceiver);
             }
         }
