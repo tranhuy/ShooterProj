@@ -27,6 +27,16 @@ public class PlayerStats : MonoBehaviour {
 	    
 	}
 
+    // Restoring 50% health by picking up a healthpack
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.transform.CompareTag("Health"))
+        {
+            currentHealth += 0.50f * maxHealth;
+            Destroy(hit.gameObject);
+        }
+    }
+
     public float GetHealth()
     {
         return currentHealth;
