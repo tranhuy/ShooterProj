@@ -19,14 +19,15 @@ public class EnemyAI : MonoBehaviour {
     float legDamageModifier = 0.8f;
     float armDamageModifier = 0.6f;
 
+    // ENEMY STATE INFO
+    bool isActive = false;
+
     // ENEMY HEALTH
     Transform healthBar;
     GUITexture healthBarTexture;
     int healthBarLength = 100;
     public float maxHealth = 100;
     float currentHealth;
-
-    bool isActive = false;
 
     // ENEMY MOVEMENT
     public float runSpeed = 6.0f;
@@ -45,7 +46,7 @@ public class EnemyAI : MonoBehaviour {
     Gun targetGun;
     Quaternion targetOffset;       // will store the difference in rotation between enemy boss and his gun
     PlayerStats playerStatus;
-    float rotateToPlayerSpeed = 50.0f;  
+    float rotateToPlayerSpeed = 70.0f;  
 
     // Animations
     public AnimationClip land_anim, idle_anim, walk_anim, run_anim, shoot__anim, spinLeft_anim, spinRight_anim, death_anim;
@@ -55,9 +56,10 @@ public class EnemyAI : MonoBehaviour {
     {
         InitializeAnimations();
         target = GameObject.FindGameObjectWithTag("Player").transform;
+        playerStatus = target.GetComponent<PlayerStats>();
         targetGun = GameObject.FindGameObjectWithTag("Gun").GetComponent<Gun>();
+
         gun = GameObject.FindGameObjectWithTag("LaserGun").GetComponent<EnemyGun>();
-        playerStatus = target.GetComponent<PlayerStats>();    
         healthBar = transform.FindChild("EnemyHealth");
         healthBarTexture = healthBar.guiTexture;
         currentHealth = maxHealth;    
@@ -70,14 +72,16 @@ public class EnemyAI : MonoBehaviour {
             animation.CrossFade("idle");
             if (playerStatus.GetHealth() > 0)
             {
-                if ((int)Vector3.Distance(transform.position, GameObject.Find("MoveToTarget").transform.position) > 0)
-                {
-                    MoveTo(GameObject.Find("MoveToTarget").transform.position);
-                }
-                else
-                {
-                    ShootAttack();
-                }
+                // Updating enemy state
+                transform.SendMessage("UpdateState", SendMessageOptions.DontRequireReceiver);
+                //if ((int)Vector3.Distance(transform.position, GameObject.Find("MoveToTarget").transform.position) > 0)
+                //{
+                //    MoveTo(GameObject.Find("MoveToTarget").transform.position);
+                //}
+                //else
+                //{
+                //    ShootAttack();
+                //}
             }
             UpdateHealthBar();   
         }
@@ -155,7 +159,7 @@ public class EnemyAI : MonoBehaviour {
         return false;
     }
 
-    void MoveTo(Vector3 location)
+    public void MoveTo(Vector3 location)
     {
         targetOffset = Quaternion.identity;
         if (TurnTowardsTarget(location, transform))
@@ -166,7 +170,7 @@ public class EnemyAI : MonoBehaviour {
         }
     }
 
-    void ShootAttack()
+    public void ShootAttack()
     {
         targetOffset = Quaternion.Euler(0, -3.6f, 0);               // difference in rotation between enemy boss and his gun
         if (TurnTowardsTarget(targetGun.transform.position, gun.transform))

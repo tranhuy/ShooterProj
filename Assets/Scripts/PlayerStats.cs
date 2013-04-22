@@ -27,7 +27,7 @@ public class PlayerStats : MonoBehaviour {
 	    
 	}
 
-    // Restoring 50% health by picking up a healthpack
+    // Restoring 50% health by picking up a medkit
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if (hit.transform.CompareTag("Health"))
